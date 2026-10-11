@@ -1,0 +1,67 @@
+NOTE — produced before parcels were re-segmented
+================================================
+This run used the earlier 375-parcel segmentation, in which some
+parcels were spatially disconnected. The current dataset has 409
+contiguous parcels. The seasonal conclusions are unaffected (they
+compare groups of parcels, not individual ids), but the parcel
+counts and ids below do not match the shipped table. Regenerating
+requires the 860 MB scene and the Sentinel-2 network workflow,
+which were not rerun for this correction.
+SUPERSEDED COUNTS BELOW
+
+Sentinel-2 seasonal trajectories over the Palm2Soil parcels
+==================================================================
+Why this exists
+  Tanager imaged Çumra ONCE (8 June 2025). Across all 276 scenes in the open
+  Tanager archive, no second acquisition covers this footprint. The
+  verification stage of the detect-prioritise-verify loop therefore cannot be
+  demonstrated with hyperspectral data alone.
+
+  Sentinel-2 can: 104 scenes under 20% cloud over this footprint between
+  March and October 2025, thinned here to 25 dates (clearest per
+  10-day window).
+
+Data
+  Sentinel-2 L2A via Microsoft Planetary Computer, tile 36SVG, 20 m
+  Bands B03, B04, B05, B8A; SCL used for masking (kept classes [4, 5, 7])
+  Reflectance offset applied for processing baseline >= 04.00
+  Parcels: the same 375 polygons, 375 of which land on the grid
+  Observations: 8890 parcel-date records
+
+Do the Tanager-flagged parcels behave differently across the season?
+  Groups: lowest and highest quintile of the 8 June stress residual
+  (134 parcels total)
+
+  Correlation of the single-date Tanager stress residual with:
+    peak_NDVI          r = -0.071
+    mean_NDVI          r = -0.223
+    late_NDVI          r = -0.247
+    senescence_drop    r = +0.158
+
+INTERPRETATION
+  A positive correlation with peak or mean NDVI means parcels scored as more
+  stressed on 8 June were also less vigorous across the whole season -- i.e.
+  the single hyperspectral date carries information about the season, not just
+  about that morning.
+  A correlation near zero would mean the 8 June score is specific to that date
+  and should not be read as a seasonal property. Either result is useful and
+  both are reported here without selection.
+
+WHAT THIS DEMONSTRATES
+  The same parcels can be tracked through time from freely available imagery.
+  Change detection works at parcel level.
+  The monitoring loop is operational, not hypothetical.
+
+WHAT IT DOES NOT DEMONSTRATE
+  No treatment occurred, so this is not a treatment effect. It is a capability
+  demonstration of the verification stage.
+  Sentinel-2 cannot measure the soil absorption features that justify
+  hyperspectral (see swir_stats.txt). The two sensors do different jobs:
+  Sentinel-2 provides the time axis, Tanager the soil chemistry.
+
+CAVEATS
+  Sentinel-2 is 20 m where the parcels were cut from a 30 m grid, so parcel
+  edges are resampled and small parcels carry fewer pixels. Observations with
+  fewer than 5 valid pixels are dropped.
+  Cloud masking relies on the provider's SCL layer.
+  One season, one region, no ground truth.

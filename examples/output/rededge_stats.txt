@@ -1,0 +1,57 @@
+Red edge: Sentinel-2 vs Tanager
+==============================================================
+Scene      20250608_091605_90_4001  Çumra, Konya, Turkey  2025-06-08
+Parcels    409
+Method     Sentinel-2 simulated from the Tanager spectrum through ESA's
+           MEASURED spectral response functions (S2-SRF v5, S2A).
+           Same pixels, same moment.
+
+Spectral sampling
+  Tanager median band spacing      5.00 nm
+  Tanager bands 690-740 nm         10
+  Sentinel-2 bands 690-740 nm      2   (B5 705, B6 740)
+  Tanager bands 670-790 nm         24
+  Sentinel-2 bands 670-790 nm      4   (B4, B5, B6, B7)
+
+Red Edge Position
+  Sentinel-2 4-point REP   mean 722.04 nm   sd 3.16
+  Tanager derivative REP   mean 729.10 nm   sd 8.22
+  correlation between them r = 0.860
+
+  Tanager REP dynamic range is 2.6x the
+  Sentinel-2 4-point estimate's. The 4-point formula interpolates between
+  700 and 740 nm, so it is bounded near there by construction and compresses
+  real variation.
+
+Does dense sampling carry anything Sentinel-2 cannot reconstruct?
+  Tanager REP regressed on the 5 simulated Sentinel-2 bands
+    R^2   0.683
+    RMSE  4.63 nm
+  A substantial part of REP variation is NOT recoverable from 5 bands.
+
+Discriminating power -- driest 20% vs wettest 20% of parcels, grouped by a
+SWIR 1650/2200 ratio. That grouping shares no band with any metric compared,
+so no metric is handed the answer.
+  Sentinel-2 NDRE                  |Cohen d| 6.060   AUC 1.000
+  Sentinel-2 REP (4-point)         |Cohen d| 2.299   AUC 0.949
+  Tanager REP (max derivative)     |Cohen d| 1.830   AUC 0.927
+
+Best separator: Sentinel-2 NDRE
+
+HONEST READING
+  An earlier version of this test grouped parcels by NDMI. That was wrong:
+  NDMI uses 860 nm and Sentinel-2's NDRE uses B8A at 865 nm, so the grouping
+  shared a band with one of the competitors and handed it a perfect score
+  (AUC 1.000). The SWIR grouping above fixes that.
+  Do NOT claim hyperspectral detects stress better than Sentinel-2 on the
+  strength of this figure. Without ground truth there is no fair arbiter of
+  "better". What this figure does support is narrower and defensible:
+  sampling density, dynamic range, and how much REP information the five
+  Sentinel-2 bands can reconstruct.
+
+CAVEATS
+  Sentinel-2 responses are ESA's published measured curves (S2-SRF v5, S2A),
+  resampled onto the Tanager grid by integrating each 5 nm interval.
+  Simulation shares Tanager's 30 m grid; real Sentinel-2 red-edge bands are
+  20 m, so a real comparison also differs in spatial sampling.
+  Single scene, single date, one region, no ground truth.

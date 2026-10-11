@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f4438">
+<title>Palm2Soil Field App — ground-truth capture</title>
+<style>
+:root{--forest:#0f4438;--forest-2:#16614e;--leaf:#3c875a;--sand:#f5f0e7;
+ --paper:#fffdf9;--ink:#17221d;--muted:#637068;--line:#d9d7cf;--sun:#e5a840;
+ --warn:#b55b2c;--shadow:0 18px 50px rgba(21,42,32,.16)}
+*{box-sizing:border-box}
+body{min-width:320px;min-height:100vh;margin:0;color:var(--ink);
+ background:radial-gradient(circle at 8% 15%,rgba(229,168,64,.16),transparent 31rem),
+ radial-gradient(circle at 90% 80%,rgba(60,135,90,.16),transparent 30rem),var(--sand);
+ font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+button{font:inherit;cursor:pointer}
+.stage{display:grid;place-items:center;min-height:100vh;padding:26px}
+.phone{width:min(100%,430px);min-height:820px;overflow:hidden;background:var(--paper);
+ border:8px solid #26342d;border-radius:34px;box-shadow:var(--shadow);
+ display:flex;flex-direction:column}
+.hdr{padding:18px 18px 16px;color:#fff;
+ background:linear-gradient(135deg,var(--forest),var(--forest-2))}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-size:19px;font-weight:750;letter-spacing:-.04em}
+.tag{padding:4px 8px;border:1px solid rgba(255,255,255,.45);border-radius:999px;
+ font-size:10px}
+.hdr h1{margin:14px 0 0;font-size:21px;letter-spacing:-.03em;line-height:1.25}
+.hdr p{margin:7px 0 0;color:rgba(255,255,255,.78);font-size:12px;line-height:1.5}
+h1,h2,h3,p{margin:0} h2{font-size:16px;letter-spacing:-.02em} h3{font-size:13.5px}
+.body{flex:1;padding:16px 14px;overflow:auto}
+.screen{display:none} .screen.on{display:block}
+.eyebrow{margin-bottom:5px;color:var(--muted);font-size:10px;font-weight:700;
+ letter-spacing:.09em;text-transform:uppercase}
+.card{border:1px solid var(--line);border-radius:17px;background:#fff;padding:14px}
+.card+.card{margin-top:10px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;
+ font-size:11px;font-weight:750}
+.pill::before{width:7px;height:7px;content:"";border-radius:50%;background:currentColor}
+.warn{color:#8a3f17;background:#f8e1b6} .mid{color:#6b5a16;background:#f3eccd}
+.ok{color:#1f6447;background:#dcefe2}
+.fieldcard h3{margin-top:10px}
+.fieldcard .sub{margin-top:4px;color:var(--muted);font-size:12px;line-height:1.45}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+.kv{padding:8px 9px;border-radius:10px;background:#f6f8f5}
+.kv span{display:block;color:var(--muted);font-size:10px}
+.kv b{display:block;margin-top:2px;font-size:12.5px}
+.btn{width:100%;min-height:42px;margin-top:12px;padding:10px 13px;border:0;
+ border-radius:11px;color:#fff;background:var(--forest);font-weight:750}
+.btn.ghost{color:var(--forest);background:#e5f1e8}
+.why{margin-top:11px;padding:10px;border-left:3px solid var(--leaf);border-radius:5px;
+ background:#f1f8f3;color:#2f5a44;font-size:11.5px;line-height:1.5}
+.why b{display:block;margin-bottom:2px}
+.notice{margin-top:14px;padding:11px;border-left:3px solid var(--sun);border-radius:5px;
+ background:#fff8e9;color:#5e5037;font-size:11.5px;line-height:1.5}
+.task{display:flex;align-items:flex-start;gap:10px}
+.task .chk{display:grid;place-items:center;width:22px;height:22px;flex:0 0 auto;
+ margin-top:1px;border:1px solid #accbb1;border-radius:50%;color:#fff;background:#fff;
+ font-size:12px}
+.done .chk{background:var(--leaf);border-color:var(--leaf)}
+.done{border-color:#b7d4bd;background:#f5fbf6}
+.task .tb{flex:1} .task p{margin-top:4px;color:var(--muted);font-size:12px;line-height:1.45}
+.tbtn{flex:0 0 auto;min-height:34px;padding:7px 11px;border:0;border-radius:10px;
+ color:var(--forest);background:#e8f2e9;font-weight:750;font-size:12px}
+.done .tbtn{color:#fff;background:var(--leaf)}
+.bar{height:7px;margin:10px 0 2px;border-radius:99px;background:#e9efe9;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--leaf);transition:width .25s}
+.barlab{color:var(--muted);font-size:11.5px}
+.steps{display:grid;gap:9px;margin-top:11px}
+.step{display:flex;align-items:flex-start;gap:9px;color:var(--muted);font-size:12.5px;
+ line-height:1.45}
+.step i{display:grid;place-items:center;width:24px;height:24px;flex:0 0 auto;
+ border-radius:8px;background:#e7f0e9;color:var(--forest);font-style:normal;
+ font-weight:750;font-size:11px}
+.nav{display:grid;grid-template-columns:repeat(4,1fr);padding:7px 7px 9px;
+ border-top:1px solid var(--line);background:#fff}
+.tab{display:grid;justify-items:center;gap:3px;min-height:50px;padding:6px 2px;
+ border:0;border-radius:11px;color:var(--muted);background:transparent;font-size:10.5px}
+.tab i{font-size:17px;font-style:normal;line-height:1}
+.tab[aria-selected=true]{color:var(--forest);background:#e7f1ea;font-weight:750}
+@media(max-width:520px){.stage{padding:0}
+ /* fixed app shell: content scrolls inside, nav stays visible */
+ .phone{width:100%;height:100vh;min-height:0;border:0;border-radius:0;box-shadow:none}}
+</style>
+</head>
+<body>
+<main class="stage">
+<section class="phone">
+  <header class="hdr">
+    <div class="hdr-row"><div class="brand">Palm2Soil</div>
+      <div class="tag">full scene</div></div>
+    <h1>One field flagged for a ground check · 3 shown</h1>
+    <p>From the satellite scan of 8 June 2025. What you record here is what
+    teaches the model — see “Why we ask”.<br>
+    <span style="opacity:.62;font-size:11px">run 20250608_091605_90_4001.95a898ccf16796179723</span></p>
+  </header>
+
+  <div class="body">
+    <!-- FIELDS -->
+    <section class="screen on" id="s-fields">
+      <div class="eyebrow">Pilot area · Çumra, Konya</div>
+      <h2>Your fields</h2>
+      <div id="fieldlist"></div>
+      <p class="notice"><b>This is not a diagnosis.</b> The scan shows where plant
+      signals differ from neighbouring fields. It cannot see salt directly, and
+      it does not replace a soil test. An advisor confirms before any treatment.</p>
+    </section>
+
+    <!-- CAPTURE -->
+    <section class="screen" id="s-capture">
+      <div class="eyebrow">This week</div>
+      <h2>Ground-truth checklist</h2>
+      <p class="notice" style="margin-top:0"><b>What this prototype captures.</b>
+      It records <i>that</i> a check was done, with the field, scan date and
+      time — not the observation itself. Attaching photographs and irrigation
+      figures is the next build step; the export format already has room for
+      them.</p>
+      <div class="bar"><i id="bar" style="width:0%"></i></div>
+      <p class="barlab" id="barlab">0 of 3 marked done</p>
+      <div id="tasklist"></div>
+      <p class="notice" id="capfeedback">Records are saved on this device as you
+      make them.</p>
+      <div id="exportrow" style="display:none">
+        <button class="btn" type="button" onclick="exportRecords()">Export records (JSON)</button>
+        <p class="notice"><b>Prototype storage.</b> There is no server in this
+        proof of concept, so records are kept in this browser only and are lost
+        if its data is cleared. Export writes a file you can hand to the
+        analysis pipeline. A deployed version would sync automatically.</p>
+      </div>
+    </section>
+
+    <!-- WHY -->
+    <section class="screen" id="s-why">
+      <div class="eyebrow">Why we ask</div>
+      <h2>What your records are for</h2>
+      <div class="card">
+        <h3>The gap we are closing</h3>
+        <p class="sub">The satellite measures how a field reflects light. It
+        cannot measure salt content directly. To turn a reflectance measurement
+        into a usable number, the system needs matched pairs: what the satellite
+        saw, and what was actually on the ground.</p>
+        <div class="why"><b>Right now we have none.</b>The last soil survey at
+        scale was in 2009 and is only available as regional percentages. Until
+        paired observations exist, the system can rank fields against each other
+        but cannot state a soil value.</div>
+      </div>
+      <div class="card">
+        <h3>What each record contributes</h3>
+        <div class="steps">
+          <div class="step"><i>1</i><div><b>Field photos</b> — confirm whether a
+            flagged field looks stressed on the ground, or whether the signal
+            came from crop type or growth stage.</div></div>
+          <div class="step"><i>2</i><div><b>Irrigation log</b> — separates water
+            shortage from soil condition. Both lower the same index.</div></div>
+          <div class="step"><i>3</i><div><b>Advisor visit</b> — attaches an expert
+            judgement, and a soil sample where one is taken, to a specific field
+            and date.</div></div>
+        </div>
+      </div>
+      <p class="notice">Records are tied to a field and a date so they can be
+      matched to the scan. They are not used to assess or rank individual farms.</p>
+    </section>
+
+    <!-- HELP -->
+    <section class="screen" id="s-help">
+      <div class="eyebrow">Support</div>
+      <h2>Before acting on a flag</h2>
+      <div class="card">
+        <h3>Talk to your advisor first</h3>
+        <p class="sub">A flag means a field is worth checking. It does not say
+        what is wrong or what to apply.</p>
+        <button class="btn ghost" type="button" onclick="toast('In the pilot this would request an advisor call.')">Request a visit</button>
+      </div>
+      <div class="card">
+        <h3>If a soil amendment is proposed</h3>
+        <div class="steps">
+          <div class="step"><i>1</i><div>Confirm the field and plan with an advisor.</div></div>
+          <div class="step"><i>2</i><div>Check the product and the application rate.
+            Some biochar carries high conductivity of its own.</div></div>
+          <div class="step"><i>3</i><div>Record what was applied and when, so recovery
+            can be checked on a later scan.</div></div>
+        </div>
+      </div>
+      <p class="notice">The app supports farm visits and follow-up. It should
+      never be used to self-treat from a satellite alert alone.</p>
+    </section>
+  </div>
+
+  <nav class="nav" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-s="s-fields" type="button"><i>▦</i>Fields</button>
+    <button class="tab" role="tab" aria-selected="false" data-s="s-capture" type="button"><i>✓</i>Capture</button>
+    <button class="tab" role="tab" aria-selected="false" data-s="s-why" type="button"><i>?</i>Why we ask</button>
+    <button class="tab" role="tab" aria-selected="false" data-s="s-help" type="button"><i>☏</i>Help</button>
+  </nav>
+</section>
+</main>
+
+<script>
+const FIELDS = [{"id":356,"tier":"Priority 1","verdict":"Flagged for inspection","tone":"warn","area":23.94,"lat":37.5594,"lon":32.5834,"ndvi":0.711,"ndre":0.498,"ndmi":0.391,"bsi":-0.333,"rank":69,"total":409,"conf":"high"},{"id":374,"tier":"Priority 2","verdict":"Worth a look","tone":"mid","area":39.06,"lat":37.5522,"lon":32.5841,"ndvi":0.693,"ndre":0.502,"ndmi":0.348,"bsi":-0.294,"rank":165,"total":409,"conf":"high"},{"id":329,"tier":"Priority 3","verdict":"No action requested","tone":"ok","area":47.52,"lat":37.5658,"lon":32.6316,"ndvi":0.783,"ndre":0.616,"ndmi":0.464,"bsi":-0.413,"rank":365,"total":409,"conf":"high"}];
+const TASKS = [
+  {k:'photo', t:'Photograph the field', p:'Soil surface and representative plants. Helps separate real stress from crop type.'},
+  {k:'irrig', t:'Log the last irrigation', p:'When the field was watered and for how long.'},
+  {k:'visit', t:'Confirm an advisor visit', p:'Attaches an expert judgement, and any soil sample, to this field and date.'}
+];
+// Records persist in this browser (localStorage) and can be exported as JSON.
+// This is a capture prototype: there is no server, so records stay on the
+// device until exported. That limitation is stated in the UI, not hidden.
+// Records are keyed by scene + field so switching dataset or field never
+// resurrects someone else's completion state. Saving reports whether it
+// actually worked -- private windows and full quotas both fail silently
+// otherwise, and claiming "saved" when nothing was saved is worse than
+// saying so.
+const SCENE = '20250608_091605_90_4001';
+const RUN_ID = '20250608_091605_90_4001.95a898ccf16796179723';
+function storeKey(fieldId){ return `palm2soil.v3.${RUN_ID}.field${fieldId}`; }
+
+let loadFailed = false;
+function loadRecords(fieldId){
+  try {
+    const raw = localStorage.getItem(storeKey(fieldId));
+    if(!raw) return {};
+    const obj = JSON.parse(raw);
+    // only keep records that belong to this scene and field
+    const out = {};
+    for(const [k,v] of Object.entries(obj)){
+      if(v && v.scene === SCENE && v.run_id === RUN_ID
+         && String(v.field) === String(fieldId)) out[k]=v;
+    }
+    return out;
+  } catch(e){
+    // A failed READ is not "no records yet". Staying silent showed an empty
+    // checklist next to "Saved on this device".
+    loadFailed = true;
+    return {};
+  }
+}
+
+function saveRecords(fieldId, r){
+  try {
+    localStorage.setItem(storeKey(fieldId), JSON.stringify(r));
+    // confirm it is actually readable back
+    return localStorage.getItem(storeKey(fieldId)) !== null;
+  } catch(e){ return false; }
+}
+
+let storageOK = true;
+const FIELD_ID = FIELDS.length ? FIELDS[0].id : null;
+let records = FIELD_ID === null ? {} : loadRecords(FIELD_ID);
+
+document.getElementById('fieldlist').innerHTML = !FIELDS.length
+  ? '<p class="notice"><b>No eligible parcels.</b> All parcels were excluded '
+    + 'because of low confidence or merged boundaries. No inspection priority '
+    + 'has been assigned. Review the imagery or parcel boundaries, then rebuild '
+    + 'the app before recording a ground check.</p>'
+  : FIELDS.map(f=>`
+  <article class="card fieldcard">
+    <span class="pill ${f.tone}">${f.tier} · ${f.verdict}</span>
+    <h3>Field ${f.id}</h3>
+    <div class="sub">${f.area} ha · ${f.lat}°N, ${f.lon}°E · ranked ${f.rank} of ${f.total} in the pilot area</div>
+    <div class="grid2">
+      <div class="kv"><span>Greenness</span><b>${f.ndvi}</b></div>
+      <div class="kv"><span>Chlorophyll</span><b>${f.ndre}</b></div>
+      <div class="kv"><span>Canopy water</span><b>${f.ndmi}</b></div>
+      <div class="kv"><span>Bare soil</span><b>${f.bsi}</b></div>
+    </div>
+    <div class="why"><b>What the scan suggests</b>${
+      f.tone==='warn'
+        ? 'Chlorophyll is lower than this field\'s own leaf cover would predict. That can mean early stress — or simply a different crop or growth stage. A ground check tells us which.'
+        : f.tone==='mid'
+        ? 'Signals are close to the local average. Worth a look if you are passing, but nothing stands out.'
+        : 'Signals are healthy relative to neighbouring fields. No follow-up requested from this scan.'
+    }</div>
+    ${f.tone==='warn' ? '<button class="btn" type="button" onclick="go(\'s-capture\')">Record a ground check</button>' : ''}
+  </article>`).join('');
+
+function renderTasks(){
+  if(FIELD_ID === null){
+    document.getElementById('tasklist').innerHTML = '';
+    document.getElementById('bar').style.width = '0%';
+    document.getElementById('barlab').textContent = 'Capture unavailable';
+    document.getElementById('capfeedback').textContent =
+      'No fields pass the quality checks. Rebuild the app with eligible parcels '
+      + 'before recording a ground check.';
+    document.getElementById('exportrow').style.display = 'none';
+    return;
+  }
+  const keys = Object.keys(records);
+  document.getElementById('tasklist').innerHTML = TASKS.map(t=>{
+    const rec = records[t.k];
+    const when = rec ? new Date(rec.at).toLocaleString() : '';
+    return `
+    <article class="card task ${rec?'done':''}">
+      <div class="chk">${rec?'✓':''}</div>
+      <div class="tb"><h3>${t.t}</h3><p>${rec
+          ? 'Marked done '+when+' · field '+rec.field
+          : t.p}</p></div>
+      <button class="tbtn" data-k="${t.k}" type="button">${rec?'Undo':'Mark done'}</button>
+    </article>`;}).join('');
+  document.querySelectorAll('.tbtn').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.k;
+    if(records[k]) delete records[k];
+    else records[k] = {task:k, field:FIELD_ID, at:new Date().toISOString(),
+                        scene:SCENE, run_id:RUN_ID, scan_date:'8 June 2025'};
+    storageOK = saveRecords(FIELD_ID, records);
+    renderTasks();
+  }));
+  const n=Object.keys(records).length;
+  document.getElementById('bar').style.width=(n/TASKS.length*100)+'%';
+  document.getElementById('barlab').textContent=`${n} of ${TASKS.length} marked done`;
+  const fb = document.getElementById('capfeedback');
+  if(loadFailed){
+    fb.innerHTML = '<b>Could not read saved records.</b> This browser '
+      + 'blocked access to its storage, so anything recorded earlier '
+      + 'cannot be shown. The checklist is empty for that reason, not '
+      + 'because nothing was recorded.';
+    fb.style.borderLeftColor = '#b55b2c';
+  } else if(!storageOK){
+    fb.innerHTML = '<b>Not saved.</b> This browser refused to store the record '
+      + '(private window, or storage full). It is held in memory for this visit '
+      + 'only — export it now or it will be lost.';
+    fb.style.borderLeftColor = '#b55b2c';
+  } else {
+    fb.style.borderLeftColor = '';
+    fb.textContent = n===TASKS.length
+      ? 'All three marked complete and saved on this device. Export below to pair them with the satellite measurement for this field and date.'
+      : 'Saved on this device. Each entry is stamped with the field, the scan date and the time.';
+  }
+  document.getElementById('exportrow').style.display = n ? 'block' : 'none';
+}
+
+function exportRecords(){
+  const rows = Object.values(records);
+  if(!rows.length) return;
+  const blob = new Blob([JSON.stringify({
+    scene:SCENE, run_id:RUN_ID, scan_date:'8 June 2025',
+    exported:new Date().toISOString(),
+    records: rows}, null, 2)], {type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='palm2soil_ground_truth_field'+FIELD_ID+'.json';
+  a.click(); URL.revokeObjectURL(a.href);
+}
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.s===id)));
+  document.querySelector('.body').scrollTop=0;
+}
+function toast(m){ alert(m); }
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.s)));
+renderTasks();
+</script>
+</body>
+</html>

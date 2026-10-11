@@ -1,0 +1,46 @@
+# Palm2Soil — Proof of Concept
+# Pinned to the versions the submitted results were produced with.
+#
+#   python -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+#
+# Tested on Python 3.12.14, macOS 14 (Intel).
+# See README → "Platform note" if pip tries to build rasterio or pyproj
+# from source.
+
+# --- core ---------------------------------------------------------------
+numpy==2.5.3
+pandas==2.3.3
+scipy==1.18.1
+matplotlib==3.11.2
+
+# --- geospatial ---------------------------------------------------------
+# rasterio and pyproj are pinned deliberately. Newer releases ship x86_64
+# macOS wheels tagged macosx_15_0, which macOS 14 cannot install; pip then
+# falls back to a source build needing GDAL and PROJ headers.
+rasterio==1.4.3
+pyproj==3.7.2
+shapely==2.1.2
+geopandas==1.2.0
+affine==3.0.1
+rioxarray==0.23.0
+xarray==2026.7.0
+
+# --- hyperspectral I/O --------------------------------------------------
+h5py==3.16.0
+openpyxl==3.1.5          # reads ESA's Sentinel-2 spectral response workbook
+
+# --- STAC / imagery access ----------------------------------------------
+# Needed only for the optional full-scene download and the Sentinel-2
+# seasonal comparison. The notebook runs offline on the bundled sample.
+pystac==1.15.2
+pystac-client==0.9.0
+planetary-computer==1.0.0
+stackstac==0.5.1
+requests==2.32.4
+urllib3==2.8.0
+certifi==2026.7.22
+
+# --- notebook -----------------------------------------------------------
+jupyter==1.1.1
+ipywidgets==8.1.9

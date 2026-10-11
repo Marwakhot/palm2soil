@@ -1,0 +1,51 @@
+Palm2Soil - per-parcel index table
+==========================================================
+Run id       20250608_091605_90_4001.95a898ccf16796179723
+Scene        20250608_091605_90_4001
+Location     Çumra, Konya, Central Anatolia Region, 42500, Turkey
+Acquired     2025-06-08T09:16:05.903891Z
+Sensor       Planet Tanager-1, 426 bands, 376-2499 nm
+Grid         30 m, EPSG:32636 (UTM 36N)
+Licence      CC-BY-4.0
+Scene cloud  2%   valid pixels 68.7%
+
+Parcels      409 cropped parcels >= 20 px (1.8 ha)
+Total area   2986 ha
+Parcel size  median 4.0 ha, range 1.8-116.7 ha
+
+Confidence   180 high, 170 medium, 59 low
+Needs split  5 parcels over 50 ha (probably several fields merged - exclude or split before use)
+
+Scene-wide NDRE ~ NDVI fit: NDRE = 0.899 * NDVI + -0.117
+Hidden-stress residual: mean 0.0000, sd 0.0233, range -0.0744 to 0.0539
+
+Index means across parcels
+  NDVI  mean  0.6614   range  0.3837 to  0.8961
+  NDRE  mean  0.4776   range  0.2354 to  0.7120
+  NDMI  mean  0.3322   range  0.0445 to  0.5678
+  BSI   mean -0.2830   range -0.5277 to -0.0256
+  SI_Khan mean  0.0951   range  0.0440 to  0.2358
+  SI_Douaoui mean  0.4590   range  0.3016 to  0.6680
+  BI    mean  0.4467   range  0.2953 to  0.6617
+  CRSI  mean  0.8588   range  0.7425 to  0.9353
+
+Top 10 parcels by hidden stress (NDRE below the level its NDVI predicts)
+----------------------------------------------------------
+ parcel_id  area_ha  NDVI_mean  NDRE_mean  stress_residual  NDMI_mean  BSI_mean confidence
+       133     1.98     0.8164     0.5426          -0.0744     0.3758   -0.3643        low
+       134     9.18     0.7314     0.4679          -0.0726     0.4493   -0.3975       high
+       161     1.80     0.7108     0.4617          -0.0602     0.3798   -0.3352        low
+       163     2.70     0.7474     0.4948          -0.0602     0.3363   -0.3139     medium
+       247     5.94     0.8852     0.6218          -0.0571     0.4095   -0.4074       high
+       322    12.42     0.6416     0.4054          -0.0544     0.3699   -0.3014       high
+       375     1.89     0.5339     0.3098          -0.0531     0.2893   -0.2100        low
+        81     5.67     0.7220     0.4791          -0.0530     0.3937   -0.3502       high
+       154     5.76     0.8575     0.6021          -0.0519     0.3646   -0.3611       high
+       103     2.52     0.5389     0.3156          -0.0518     0.2941   -0.2357     medium
+
+CAVEATS
+  Parcels are segmented from the imagery, not from cadastral boundaries.
+  Salinity indices are VERIFIED against published sources and computed on
+  broadband-equivalent reflectance - see SALINITY_INDEX_VERIFICATION.md.
+  Severity is RELATIVE within this scene - no absolute dS/m calibration
+  exists without ground truth.

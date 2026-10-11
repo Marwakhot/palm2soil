@@ -1,0 +1,90 @@
+The SWIR argument for hyperspectral
+==================================================================
+Scene    20250608_091605_90_4001  Çumra, Konya, Turkey  2025-06-08
+Target   92 bare-soil patches (NDVI < 0.15, >= 20 px)
+Method   Sentinel-2 simulated from the Tanager spectrum through ESA's
+         MEASURED spectral response functions (S2-SRF v5, S2A).
+         Same pixels, same instant -- sampling is the only variable.
+
+WHY BARE SOIL AND NOT CROPS
+  Salt crusts are a soil-surface phenomenon. Over a closed canopy the soil is
+  hidden and the SWIR carries leaf water, not soil chemistry. Measuring these
+  features over cropped parcels produced a weak, largely artefactual result;
+  over bare ground the features are clean and deep. This also means detection
+  and crop-stress monitoring need DIFFERENT pixels, which the product design
+  should reflect.
+
+THE PHYSICS, STATED CORRECTLY
+  Pure halite (NaCl) has NO diagnostic absorption in VNIR-SWIR -- its crystal
+  lattice produces no vibrational features there. Never claim direct NaCl
+  detection; it is wrong and a technical panel will know it.
+  What IS detectable: halite is hygroscopic, so salt crusts show secondary
+  features in the water-absorption regions (reported near 1442, 1851, 1958
+  and 2226 nm), and associated evaporites such as gypsum have genuinely
+  diagnostic features (near 1023, 1225, 1457, 1757, 1800 and 2336 nm).
+  Reported salt-correlated windows: 1931-2123 nm and 2153-2254 nm.
+
+SENTINEL-2 SWIR BANDS, FROM ESA'S MEASURED RESPONSES
+  (COPE-GSEG-EOPG-TN-15-0007 S2-SRF v5, unit S2A; extents at 1% response)
+  B11  centre  1613.7 nm  FWHM    89 nm  50% 1569-1658  span 1557-1667
+  B12  centre  2202.4 nm  FWHM   173 nm  50% 2113-2286  span 2092-2316
+
+  B12's measured response is 0.002 of peak at 2320 nm and EXACTLY ZERO from
+  2340 nm onward. The 2340 nm feature is not merely attenuated for
+  Sentinel-2 -- it is entirely outside the instrument.
+
+BAND COUNTS -- SENSOR DESIGN, TRUE REGARDLESS OF SCENE
+  Window                       Tanager   Sentinel-2
+  1931-2123 salt window           39      6.2% of S-2's SWIR response
+  2153-2254 salt window           20      59.5%, all inside one band
+  1667-2092                       86      ZERO -- a 425 nm blind gap
+  2316-2450                       27      ZERO -- B12's response has ended
+  1500-2500 total                201      2
+
+  Between B11 and B12 lies 425 nm Sentinel-2 cannot see; past 2316 nm it is
+  blind again. Only 6.2% of Sentinel-2's SWIR response falls in the
+  1931-2123 salt window, and the gypsum/carbonate feature near 2340 nm sits
+  beyond the instrument entirely.
+
+FEATURES MEASURED ON BARE SOIL
+  2216 nm  clay Al-OH / halite crust
+     depth    mean 0.0629  sd 0.0196  range 0.0136-0.1095
+     position mean 2210.4 nm  sd 1.9 nm
+  2340 nm  carbonate / gypsum
+     depth    mean 0.0423  sd 0.0324  range 0.0240-0.3274
+     position mean 2355.8 nm  sd 19.4 nm
+
+HOW MUCH CAN SENTINEL-2'S TWO SWIR BANDS RECONSTRUCT?
+  2216 nm depth   R2 0.512   49% of the variance unrecoverable
+  2340 nm depth   R2 0.035   97% of the variance unrecoverable
+
+  For comparison, Sentinel-2 reconstructed red-edge position at R2 0.68.
+  In the SWIR it does far worse: B12 integrates a whole feature into one
+  number, and beyond 2316 nm its measured response is zero.
+
+THE ARGUMENT, IN ONE PARAGRAPH
+  Soil salinity is not directly visible to any optical sensor -- halite has no
+  diagnostic absorption in the VNIR-SWIR. It is inferred from hydration
+  features and associated evaporite minerals, whose absorptions are tens of
+  nanometres wide and sit near 1450, 1850, 1950, 2200 and 2340 nm. Sentinel-2
+  carries two SWIR bands; ESA's measured responses give them FWHM of 89 and 173 nm,
+  a 425 nm gap between them, and no response at all beyond 2316 nm. It cannot
+  resolve a 40 nm absorption, and it misses several outright -- only 6.2% of its
+  SWIR response falls in the 1931-2123 nm salt window. Tanager samples the
+  same range with 201 contiguous bands. Measured on bare soil in this scene,
+  Sentinel-2's SWIR bands reconstruct only 3-51% of the variance in
+  absorption-feature depth. That is the documented limitation hyperspectral
+  is being brought in to solve.
+
+CAVEATS
+  Sentinel-2 responses are ESA's published measured curves, resampled onto
+  the Tanager grid by integrating each 5 nm interval. S2A used; B12 differs
+  slightly between units (S2A centre 2202, S2B 2186, S2C 2191 nm), which does
+  not change the conclusion.
+  Water-vapour bands excluded from feature fitting.
+  Single scene, one date, no ground truth. Feature depth is NOT calibrated to
+  dS/m and must not be presented as a salinity measurement -- only as evidence
+  that the signal exists and that broadband sensors cannot capture it.
+  Çumra is an agricultural analogue, not a UAE scene. Mineralogy differs
+  between the Konya plain and Al Ain, so the specific features present will
+  differ even though the sampling argument does not.
